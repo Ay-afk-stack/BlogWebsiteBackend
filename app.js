@@ -37,7 +37,8 @@ app.post("/blog", upload.single("image"), async (req, res) => {
   const { title, subTitle, description } = req.body;
   let filename;
   if (req.file) {
-    filename = "http://localhost:3000/" + req.file.filename;
+    filename =
+      "https://blogwebsitebackend-31vj.onrender.com/" + req.file.filename;
   } else {
     filename =
       "https://plus.unsplash.com/premium_photo-1688645554172-d3aef5f837ce?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8bmVwYWwlMjBtb3VudGFpbnxlbnwwfHwwfHx8MA%3D%3D";
@@ -134,7 +135,7 @@ app.patch("/blog/:id", upload.single("image"), async (req, res) => {
     title,
     subTitle,
     description,
-    image: "http://localhost:3000/" + filename,
+    image: "https://blogwebsitebackend-31vj.onrender.com/" + filename,
   };
 
   await Blog.findByIdAndUpdate(id, upDatedBlog);
