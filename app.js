@@ -11,7 +11,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://blog-website-orpin-psi.vercel.app/",
+      "https://blog-website-orpin-psi.vercel.app",
     ],
   })
 );
