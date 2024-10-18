@@ -5,6 +5,14 @@ const express = require("express");
 const connectToDatabase = require("./database");
 const app = express();
 
+//Importing CORS
+const cors = require("cors");
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+  })
+);
+
 //Enable to Read JSON
 app.use(express.json());
 
@@ -24,9 +32,15 @@ const Blog = require("./model/blogModel");
 //Insert API
 app.post("/blog", upload.single("image"), async (req, res) => {
   const { title, subTitle, description } = req.body;
-  const { filename } = req.file;
+  let filename;
+  if (req.file) {
+    filename = "http://localhost:3000/" + req.file.filename;
+  } else {
+    filename =
+      "https://plus.unsplash.com/premium_photo-1688645554172-d3aef5f837ce?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8bmVwYWwlMjBtb3VudGFpbnxlbnwwfHwwfHx8MA%3D%3D";
+  }
 
-  if (!title || !subTitle || !description || !filename) {
+  if (!title || !subTitle || !description) {
     fs.unlink(`./storage/${filename}`, (err) => {
       if (err) {
         console.log(err);
@@ -100,17 +114,25 @@ app.delete("/blog/:id", async (req, res) => {
 app.patch("/blog/:id", upload.single("image"), async (req, res) => {
   const id = req.params.id;
   const { title, subTitle, description } = req.body;
-  const { filename } = req.file;
-
-  if (filename) {
+  let filename;
+  if (req.file.filename !== "") {
     const { image } = await Blog.findById(id);
     const toDeleteImage = image;
     fs.unlink(`./storage/${toDeleteImage}`, (err) => {
       if (err) console.log(err);
     });
+    filename = req.file.filename;
+  } else {
+    const { image } = await Blog.findById(id);
+    filename = image;
   }
 
-  const upDatedBlog = { title, subTitle, description, image: filename };
+  const upDatedBlog = {
+    title,
+    subTitle,
+    description,
+    image: "http://localhost:3000/" + filename,
+  };
 
   await Blog.findByIdAndUpdate(id, upDatedBlog);
 
